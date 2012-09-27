@@ -3,6 +3,9 @@
 #include "types.h"
 #include "memory_types.h"
 
+/// Array of POD objects.
+/// * Does not call constructors & destructors on elements.
+/// * Assumes they can be moved with memmove().
 template<typename T> struct Array
 {
 	Array(Allocator &a);

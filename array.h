@@ -5,6 +5,10 @@
 
 #include <memory>
 
+// TODO:
+// * insert
+// * erase
+
 namespace array
 {
 	template<typename T> inline uint32_t size(const Array<T> &a) 		{return a._size;}
@@ -22,11 +26,20 @@ namespace array
 	template<typename T> inline T& back(Array<T> &a) 					{return a._data[a._size-1];}
 	template<typename T> inline const T& back(const Array<T> &a) 		{return a._data[a._size-1];}
 
+	template <typename T> inline void clear(Array<T> &a) {resize(a,0);}
+	template <typename T> inline void trim(Array<T> &a) {set_capacity(a,a._size);}
+
 	template <typename T> void resize(Array<T> &a, uint32_t new_size)
 	{
 		if (new_size > a._capacity)
 			grow(a, new_size);
 		a._size = new_size;
+	}
+
+	template <typename T> inline void reserve(Array<T> &a, uint32_t new_capacity)
+	{
+		if (new_capacity > a._capacity)
+			set_capacity(a, new_capacity);
 	}
 
 	template<typename T> void set_capacity(Array<T> &a, uint32_t new_capacity)
