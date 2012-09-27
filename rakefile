@@ -1,0 +1,33 @@
+# constants
+
+COMPILER = "g++"
+EXEC = "unit_test"
+FLAGS = "-Wall -Wextra"
+
+OBJECTS = ['unit_test.o', 'memory.o']
+
+# tasks
+
+task :build => [EXEC]
+
+task :test => :build do
+	sh "./#{EXEC}"
+end
+
+task :default => :test
+
+desc "Clean stuff"
+task :clean do
+	files = (Dir["*.o"] + Dir["#{EXEC}"]).uniq
+	rm_f files unless files.empty?
+end
+
+# rules
+
+rule '.o' => '.cpp' do |target|
+	sh "#{COMPILER} #{FLAGS} -c -o #{target.name} #{target.source}"
+end
+
+file EXEC => OBJECTS do
+	sh "#{COMPILER} #{FLAGS} #{OBJECTS.join(" ")} -o #{EXEC}"
+end
