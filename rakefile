@@ -4,7 +4,8 @@ COMPILER = "g++"
 EXEC = "unit_test"
 FLAGS = "-Wall -Wextra"
 
-OBJECTS = ['unit_test.o', 'memory.o']
+OBJECTS = %w(unit_test.o memory.o)
+HEADERS = %w(array.h collection_types.h memory.h memory_types.h types.h)
 
 # tasks
 
@@ -31,3 +32,8 @@ end
 file EXEC => OBJECTS do
 	sh "#{COMPILER} #{FLAGS} #{OBJECTS.join(" ")} -o #{EXEC}"
 end
+
+# dependencies
+
+file 'unit_test.o' => %w(unit_test.cpp) + HEADERS
+file 'memory.o' => %w(memory.cpp) + %w(types.h memory_types.h memory.h)

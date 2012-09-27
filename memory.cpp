@@ -60,6 +60,9 @@ namespace {
 		}
 
 		virtual void deallocate(void *p) {
+			if (!p)
+				return;
+
 			Header *h = header(p);
 			_total_allocated -= h->size;
 			free(h);

@@ -1,5 +1,7 @@
+#pragma once
+
+#include "types.h"
 #include "memory_types.h"
-#include <stdint.h>
 
 /// Base class for memory allocators.
 ///
@@ -12,12 +14,17 @@ public:
 	/// Default alignment for memory allocations.
 	static const uint32_t DEFAULT_ALIGN = 4;
 
+	Allocator() {}
 	virtual ~Allocator() {}
 	
 	virtual void *allocate(uint32_t size, uint32_t align = DEFAULT_ALIGN) = 0;
 	virtual void deallocate(void *p) = 0;
 	virtual uint32_t allocated_size(void *p) = 0;
 	virtual uint32_t total_allocated() = 0;
+
+private:
+    Allocator(const Allocator& other);
+    Allocator& operator=(const Allocator& other);
 };
 
 #define MAKE_NEW(a, T, ...)		(new ((a).allocate(sizeof(T), alignof(T))) T(__VA_ARGS__))
