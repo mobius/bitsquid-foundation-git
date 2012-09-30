@@ -1,3 +1,4 @@
+#include "temp_allocator.h"
 #include "array.h"
 #include "memory.h"
 
@@ -78,6 +79,18 @@ namespace {
 
 		memory_globals::shutdown();
 	}
+
+	void test_temp_allocator() {
+		memory_globals::init(256*1024);
+		{
+			TempAllocator128 ta;
+			Array<int> a(ta);
+			for (int i=0; i<100; ++i)
+				array::push_back(a, i);
+			ta.allocate(2*1024);
+		}
+		memory_globals::shutdown();
+	}
 }
 
 int main(int, char **)
@@ -85,5 +98,6 @@ int main(int, char **)
 	test_memory();
 	test_array();
 	test_scratch();
+	test_temp_allocator();
 	return 0;
 }

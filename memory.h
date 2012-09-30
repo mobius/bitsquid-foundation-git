@@ -38,6 +38,8 @@ public:
 	/// Returns the total amount of memory allocated by this allocator. Note that the 
 	/// size returned can be bigger than the size of all individual allocations made,
 	/// because the allocator may keep additional structures.
+	///
+	/// If the allocator doesn't track memory, this function returns SIZE_NOT_TRACKED.
 	virtual uint32_t total_allocated() = 0;
 
 private:
@@ -73,4 +75,22 @@ namespace memory_globals {
 
 	/// Shuts down the global memory allocators created by init().
 	void shutdown();
+}
+
+namespace memory {
+	inline void *align_forward(void *p, uint32_t align);
+}
+
+// ---------------------------------------------------------------
+// Inline function implementations
+// ---------------------------------------------------------------
+
+// Aligns p to the specified alignment by moving it forward if necessary
+// and returns the result.
+inline void *memory::align_forward(void *p, uint32_t align) {
+	uintptr_t pi = uintptr_t(p);
+	const uint32_t mod = pi % align;
+	if (mod)
+		pi += (align - mod);
+	return (void *)pi;
 }

@@ -14,20 +14,10 @@ namespace {
 	// value after storing the size. That way we can 
 	const uint32_t HEADER_PAD_VALUE = 0xffffffffu;
 
-	// Aligns p to the specified alignment by moving it forward if necessary
-	// and returns the result.
-	inline void *align_forward(void *p, uint32_t align) {
-		uintptr_t pi = uintptr_t(p);
-		const uint32_t mod = pi % align;
-		if (mod)
-			pi += (align - mod);
-		return (void *)pi;
-	}
-
 	// Given a pointer to the header, returns a pointer to the data that follows it.
 	inline void *data_pointer(Header *header, uint32_t align) {
 		void *p = header + 1;
-		return align_forward(p, align);
+		return memory::align_forward(p, align);
 	}
 
 	// Given a pointer to the data, returns a pointer to the header before it.
