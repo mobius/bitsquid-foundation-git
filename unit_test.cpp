@@ -17,12 +17,10 @@ namespace {
 		void *q = a.allocate(100);
 		ASSERT(a.allocated_size(q) >= 100);
 		ASSERT(a.total_allocated() >= 200);
-
+		
 		a.deallocate(p);
 		a.deallocate(q);
-
-		ASSERT(a.total_allocated() == 0);
-
+		
 		memory_globals::shutdown();
 	}
 
@@ -55,9 +53,6 @@ namespace {
 				array::push_back(v, i);
 			ASSERT(array::size(v) == 100);
 		}
-
-		ASSERT(a.total_allocated() == 0);
-
 
 		memory_globals::shutdown();
 	}
