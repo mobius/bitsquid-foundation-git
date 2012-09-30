@@ -56,11 +56,34 @@ namespace {
 
 		memory_globals::shutdown();
 	}
+
+	void test_scratch() {
+		memory_globals::init(256*1024);
+		Allocator &a = memory_globals::default_scratch_allocator();
+
+		char *p = (char *)a.allocate(10*1024);
+
+		char *pointers[100];
+		for (int i=0; i<100; ++i)
+			pointers[i] = (char *)a.allocate(1024);
+		for (int i=0; i<100; ++i)
+			a.deallocate(pointers[i]);
+
+		a.deallocate(p);
+
+		for (int i=0; i<100; ++i)
+			pointers[i] = (char *)a.allocate(4*1024);
+		for (int i=0; i<100; ++i)
+			a.deallocate(pointers[i]);
+
+		memory_globals::shutdown();
+	}
 }
 
 int main(int, char **)
 {
 	test_memory();
 	test_array();
+	test_scratch();
 	return 0;
 }

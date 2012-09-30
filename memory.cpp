@@ -192,13 +192,13 @@ namespace {
 
 			// Mark this slot as free
 			Header *h = header(p);
-			assert(h->size & 0x80000000u == 0);
+			assert((h->size & 0x80000000u) == 0);
 			h->size = h->size | 0x80000000u;
 
 			// Advance the free pointer past all free slots.
 			while (_free != _allocate) {
 				Header *h = (Header *)_free;
-				if (h->size & 0x80000000u == 0)
+				if ((h->size & 0x80000000u) == 0)
 					break;
 
 				_free += h->size & 0x7fffffffu;
@@ -209,7 +209,7 @@ namespace {
 
 		virtual uint32_t allocated_size(void *p) {
 			Header *h = header(p);
-			return h->size;
+			return h->size - ((char *)p - (char *)h);
 		}
 
 		virtual uint32_t total_allocated() {
