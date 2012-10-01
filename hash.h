@@ -17,19 +17,12 @@ namespace hash_internal
 	const uint32_t END_OF_LIST = 0xffffffffu;
 	static const uint64_t UNUSED_KEY = 0xffffffffeeeeeeeeull;
 
-	template<typename T> uint32_t find_or_fail(const Hash<T> &h, uint64_t key)
+	struct FindResult
 	{
-		if (array::size(h._hash) == 0)
-			return END_OF_LIST;
-
-		uint32_t ei = h._hash[key % array::size(h._hash)];
-		while (ei != END_OF_LIST) {
-			if (h._data[ei].key == key)
-				return ei;
-			ei = h._data[ei].next;
-		}
-		return ei;
-	}
+		uint32_t hash_i;
+		uint32_t data_prev;
+		uint32_t data_i;
+	};	
 
 	template<typename T> uint32_t add_entry(Hash<T> &h, uint64_t key)
 	{
@@ -47,54 +40,62 @@ namespace hash_internal
 		return ei;
 	}
 
-	template<typename T> uint32_t find_or_make(Hash<T> &h, uint64_t key)
+	template<typename T> void erase(Hash<T> &h, const FindResult &fr)
 	{
-		uint32_t i = key % array::size(h._hash);
-		if (h._hash[i] == END_OF_LIST) {
-			uint32_t ei = add_entry(h, key);
-			h._hash[i] = ei;
-			return ei;
-		}
-		uint32_t ei = h._hash[i];
-		while (true) {
-			if (h._data[ei].key == key)
-				return ei;
-			uint32_t next = h._data[ei].next;
-			if (next == END_OF_LIST) {
-				uint32_t next_ei = add_entry(h, key);
-				h._data[ei].next = next_ei;
-				return next_ei;
-			}
-			ei = next;
-		}
+		if (fr.data_prev == END_OF_LIST)
+			h._hash[fr.hash_i] = h._data[fr.data_i].next;
+		else
+			h._data[fr.data_prev].next = h._data[fr.data_i].next;
+		h._data[fr.data_i].key = UNUSED_KEY;
+		h._data[fr.data_i].next = h._freelist;
+		h._freelist = fr.data_i;
 	}
 
-	template<typename T> void erase(Hash<T> &h, uint32_t i, uint32_t prev, uint32_t ei)
+	template<typename T> FindResult find(const Hash<T> &h, uint64_t key)
 	{
-		if (prev == END_OF_LIST)
-			h._hash[i] = h._data[ei].next;
-		else
-			h._data[prev].next = h._data[ei].next;
-		h._data[ei].key = UNUSED_KEY;
-		h._data[ei].next = h._freelist;
-		h._freelist = ei;
+		FindResult fr;
+		fr.hash_i = END_OF_LIST;
+		fr.data_prev = END_OF_LIST;
+		fr.data_i = END_OF_LIST;
+
+		if (array::size(h._hash) == 0)
+			return fr;
+
+		fr.hash_i = key % array::size(h._hash);
+		fr.data_i = h._hash[fr.hash_i];
+		while (fr.data_i != END_OF_LIST) {
+			if (h._data[fr.data_i].key == key)
+				return fr;
+			fr.data_prev = fr.data_i;
+			fr.data_i = h._data[fr.data_i].next;
+		}
+		return fr;
 	}
+
+	template<typename T> uint32_t find_or_fail(const Hash<T> &h, uint64_t key)
+	{
+		return find(h, key).data_i;
+	}
+
+	template<typename T> uint32_t find_or_make(Hash<T> &h, uint64_t key)
+	{
+		FindResult fr = find(h, key);
+		if (fr.data_i != END_OF_LIST)
+			return fr.data_i;
+
+		fr.data_i = add_entry(h, key);
+		if (fr.data_prev == END_OF_LIST)
+			h._hash[fr.hash_i] = fr.data_i;
+		else
+			h._data[fr.data_prev].next = fr.data_i;
+		return fr.data_i;
+	}	
 
 	template<typename T> void find_and_erase(Hash<T> &h, uint64_t key)
 	{
-		if (array::size(h._hash) == 0)
-			return;
-
-		uint32_t prev = END_OF_LIST;
-		uint32_t i = key % array::size(h._hash);
-		uint32_t ei = h._hash[i];
-		while (ei != END_OF_LIST) {
-			if (h._data[ei].key == key) {
-				erase(h, i, prev, ei);
-				return;
-			}
-			ei = h._data[ei].next;
-		}
+		const FindResult fr = find(h, key);
+		if (fr.data_i != END_OF_LIST)
+			erase(h, fr);
 	}
 
 	template<typename T> void rehash(Hash<T> &h, uint32_t new_size)
