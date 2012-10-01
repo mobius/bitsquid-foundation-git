@@ -47,9 +47,15 @@ Note that since namespaces are "open" you can extend the functionality for the o
 
 * **memory_globals::default_allocator()** Returns a default allocator based on malloc().
 
+* **memory_globals::default_scratch_allocator()** Returns a "scratch" allocator that can be used for temporary memory allocations. The scratch allocator allocates its memory from a fixed sized ring buffer, meaning it doesn't touch any OS resources. When the ring buffer loops around, the old memory must have been freed for the scratch buffer to be able to allocate new memory, so only use it for temporary allocations.
+
+* **TempAllocator.** An allocator suitable for temporary allocators. The TempAllocator comes in a number of variations: TempAllocator64, TempAllocator128, etc. The number indicates how much local stack space the allocator reserves. Memory is allocated first from the local stack space and only if that is exhausted from the scratch buffer. Memory allocated with the TempAllocator does not have to be freed. It is freed automatically when the allocator is destroyed.
+
 ### Collection
 
 * **Array<T>** Implements an array of objects. A lightweight version of std::vector that assumes that *T* is a POD-object (i.e. constructors and destructors do not have to be called and the object can be moved with memmove).
+
+* **Hash<T>** Implements a lightweight hash that assumes that *T* is a POD-object. The hash keys are always uint64_t numbers. If you want to use some other type of key, just hash it to a uint64_t first. (The hash function should not have any collisions in your domain.)
 
 ### Math
 

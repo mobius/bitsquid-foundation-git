@@ -1,3 +1,4 @@
+#include "hash.h"
 #include "temp_allocator.h"
 #include "array.h"
 #include "memory.h"
@@ -81,13 +82,39 @@ namespace {
 	}
 
 	void test_temp_allocator() {
-		memory_globals::init(256*1024);
+		memory_globals::init();
 		{
 			TempAllocator128 ta;
 			Array<int> a(ta);
 			for (int i=0; i<100; ++i)
 				array::push_back(a, i);
 			ta.allocate(2*1024);
+		}
+		memory_globals::shutdown();
+	}
+
+	void test_hash() {
+		memory_globals::init();
+		{
+			TempAllocator128 ta;
+			Hash<int> h(ta);
+			ASSERT(hash::get(h,0,99) == 99);
+			ASSERT(!hash::has(h, 0));
+			hash::remove(h, 0);
+			hash::set(h, 1000, 123);
+			ASSERT(hash::get(h,1000,0) == 123);
+			ASSERT(hash::get(h,2000,99) == 99);
+
+			for (int i=0; i<100; ++i)
+				hash::set(h, i, i*i);
+			for (int i=0; i<100; ++i)
+				ASSERT(hash::get(h,i,0) == i*i);
+			hash::remove(h, 1000);
+			ASSERT(!hash::has(h, 1000));
+			hash::remove(h, 2000);
+			ASSERT(hash::get(h,1000,0) == 0);
+			for (int i=0; i<100; ++i)
+				ASSERT(hash::get(h,i,0) == i*i);
 		}
 		memory_globals::shutdown();
 	}
@@ -99,5 +126,6 @@ int main(int, char **)
 	test_array();
 	test_scratch();
 	test_temp_allocator();
+	test_hash();
 	return 0;
 }

@@ -4,6 +4,7 @@
 #include "memory_types.h"
 
 /// Array of POD objects.
+///
 /// * Does not call constructors & destructors on elements.
 /// * Assumes they can be moved with memmove().
 template<typename T> struct Array
@@ -20,4 +21,31 @@ template<typename T> struct Array
 	uint32_t _size;
 	uint32_t _capacity;
 	T *_data;
+};
+
+/// Hash from an uint64_t to POD objects. If you want to use a generic key
+/// object, use a hash function to map that to an uint64_t.
+///
+/// * Does not call constructors & destructors on elements.
+/// * Assumes they can be moved with memmove().
+template<typename T> struct Hash
+{
+public:
+	Hash(Allocator &a);
+	
+	// Marks an unused _data entry.
+	static const uint64_t UNUSED_KEY = 0xffffffffeeeeeeeeull;
+	
+	// Marks end of linked next list.
+	static const uint32_t END_OF_LIST = 0xffffffffu;
+
+	struct Entry {
+		uint64_t key;
+		uint32_t next;
+		T value;
+	};
+
+	uint32_t _freelist;
+	Array<uint32_t> _hash;
+	Array<Entry> _data;
 };
