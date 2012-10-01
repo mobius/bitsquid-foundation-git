@@ -4,8 +4,10 @@
 #include "collection_types.h"
 
 /// The hash function stores its data in a "list-in-an-array" where
-/// indices are used instead of pointers. A free list is used to keep
-/// track of free data entries.
+/// indices are used instead of pointers. 
+///
+/// When items are removed, the array-list is repacked to always keep
+/// it tightly ordered.
 
 namespace hash
 {
@@ -15,8 +17,7 @@ namespace hash
 namespace hash_internal
 {
 	const uint32_t END_OF_LIST = 0xffffffffu;
-	static const uint64_t UNUSED_KEY = 0xffffffffeeeeeeeeull;
-
+	
 	struct FindResult
 	{
 		uint32_t hash_i;
@@ -29,14 +30,8 @@ namespace hash_internal
 		typename Hash<T>::Entry e;
 		e.key = key;
 		e.next = END_OF_LIST;
-		if (h._freelist == END_OF_LIST) {
-			uint32_t ei = array::size(h._data);
-			array::push_back(h._data, e);
-			return ei;
-		}
-		uint32_t ei = h._freelist;
-		h._freelist = h._data[h._freelist].next;
-		h._data[ei] = e;
+		uint32_t ei = array::size(h._data);
+		array::push_back(h._data, e);
 		return ei;
 	}
 
@@ -46,9 +41,19 @@ namespace hash_internal
 			h._hash[fr.hash_i] = h._data[fr.data_i].next;
 		else
 			h._data[fr.data_prev].next = h._data[fr.data_i].next;
-		h._data[fr.data_i].key = UNUSED_KEY;
-		h._data[fr.data_i].next = h._freelist;
-		h._freelist = fr.data_i;
+
+		if (fr.data_i == array::size(h._data) - 1) {
+			array::pop_back(h._data);
+			return;
+		}
+
+		h._data[fr.data_i] = h._data[array::size(h._data) - 1];
+		FindResult last = find(h, h._data[fr.data_i].key);
+
+		if (last.data_prev != END_OF_LIST)
+			h._data[last.data_prev].next = fr.data_i;
+		else
+			h._hash[last.hash_i] = fr.data_i;
 	}
 
 	template<typename T> FindResult find(const Hash<T> &h, uint64_t key)
@@ -107,8 +112,6 @@ namespace hash_internal
 			nh._hash[i] = END_OF_LIST;
 		for (uint32_t i=0; i<array::size(h._data); ++i) {
 			const typename Hash<T>::Entry &e = h._data[i];
-			if (h._data[i].key == UNUSED_KEY)
-				continue;
 			hash::set(nh, e.key, e.value);
 		}
 
@@ -166,8 +169,18 @@ namespace hash
 	{
 		hash_internal::rehash(h, size);
 	}
+
+	template<typename T> const typename Hash<T>::Entry *begin(const Hash<T> &h)
+	{
+		return array::begin(h._data);
+	}
+
+	template<typename T> const typename Hash<T>::Entry *end(const Hash<T> &h)
+	{
+		return array::end(h._data);
+	}
 }
 
 template <typename T> Hash<T>::Hash(Allocator &a) :
-	_freelist(END_OF_LIST), _hash(a), _data(a)
+	_hash(a), _data(a)
 {}

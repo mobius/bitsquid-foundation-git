@@ -33,9 +33,6 @@ template<typename T> struct Hash
 public:
 	Hash(Allocator &a);
 	
-	// Marks an unused _data entry.
-	static const uint64_t UNUSED_KEY = 0xffffffffeeeeeeeeull;
-	
 	// Marks end of linked next list.
 	static const uint32_t END_OF_LIST = 0xffffffffu;
 
@@ -45,7 +42,6 @@ public:
 		T value;
 	};
 
-	uint32_t _freelist;
 	Array<uint32_t> _hash;
 	Array<Entry> _data;
 };
