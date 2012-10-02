@@ -10,6 +10,8 @@
 #define ASSERT(x) assert(x)
 
 namespace {
+	using namespace foundation;
+	
 	void test_memory() {
 		memory_globals::init();
 		Allocator &a = memory_globals::default_allocator();

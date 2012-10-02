@@ -1,4 +1,4 @@
 syntax: glob
 *.o
 unit_test
-mini_foundation
+foundation
