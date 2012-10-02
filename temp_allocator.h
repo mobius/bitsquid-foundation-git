@@ -75,7 +75,7 @@ template <int BUFFER_SIZE>
 void *TempAllocator<BUFFER_SIZE>::allocate(uint32_t size, uint32_t align)
 {
 	_p = (char *)memory::align_forward(_p, align);
-	if (size > _end - _p) {
+	if ((int)size > _end - _p) {
 		uint32_t to_allocate = sizeof(void *) + size + align;
 		if (to_allocate < _chunk_size)
 			to_allocate = _chunk_size;

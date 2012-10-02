@@ -24,7 +24,7 @@ template<typename T> struct Array
 };
 
 /// Hash from an uint64_t to POD objects. If you want to use a generic key
-/// object, use a hash function to map that to an uint64_t.
+/// object, use a hash function to map that object to an uint64_t.
 ///
 /// * Does not call constructors & destructors on elements.
 /// * Assumes they can be moved with memmove().
@@ -33,9 +33,6 @@ template<typename T> struct Hash
 public:
 	Hash(Allocator &a);
 	
-	// Marks end of linked next list.
-	static const uint32_t END_OF_LIST = 0xffffffffu;
-
 	struct Entry {
 		uint64_t key;
 		uint32_t next;

@@ -1,3 +1,4 @@
+#include "murmur_hash.h"
 #include "hash.h"
 #include "temp_allocator.h"
 #include "array.h"
@@ -118,6 +119,13 @@ namespace {
 		}
 		memory_globals::shutdown();
 	}
+
+	void test_murmur_hash()
+	{
+		const char *s = "test_string";
+		uint64_t h = murmur_hash_64(s, strlen(s), 0);
+		ASSERT(h == 0xe604acc23b568f83ull);
+	}
 }
 
 int main(int, char **)
@@ -127,5 +135,6 @@ int main(int, char **)
 	test_scratch();
 	test_temp_allocator();
 	test_hash();
+	test_murmur_hash();
 	return 0;
 }

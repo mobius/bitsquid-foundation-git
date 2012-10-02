@@ -39,6 +39,10 @@ Note that since namespaces are "open" you can extend the functionality for the o
 
 * **Abstract classes.** Used for high-level systems that are only accessed through pointers and/or references. These are predeclared in the \_types.h file. The virtual interface is found in the .h file.
 
+## Compiler flags
+
+* **PLATFORM_BIG_ENDIAN** Should be defined if you are compiling for a big endian platform.
+
 ## Systems
 
 ### Memory
