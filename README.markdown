@@ -1,12 +1,12 @@
 # foundation
 
-*foundation* is a minimalistic foundation library with functions for memory allocation, data manipulation, etc.
+*foundation* is a minimalistic foundation library with functions for memory allocation, data manipulation, etc released under the very permissive MIT license - for your pleasure.
 
 ## Library Design
 
 *foundation* has been written with data-oriented programming in mind (POD data is preferred over complicated classes, flat arrays are the preferred data structure, etc).
 
-mini_foundation is written in a "back-to-C" style of C++ programming. This means that there is a clear separation between data and code. Data defitions are found in \_types.h header files. Function definitions are found in .h header files.
+foundation is written in a "back-to-C" style of C++ programming. This means that there is a clear separation between data and code. Data defitions are found in \_types.h header files. Function definitions are found in .h header files.
 
 When you are writing a system using foundation, your header files typically only need to include the \_types.h files. These are designed to be as compact as possible, meaning your compile times will be short. In the .cpp files you can include the heavier .h files.
 
