@@ -81,6 +81,10 @@ namespace foundation
 
 	namespace memory {
 		inline void *align_forward(void *p, uint32_t align);
+		inline void *pointer_add(void *p, uint32_t bytes);
+		inline const void *pointer_add(const void *p, uint32_t bytes);
+		inline void *pointer_sub(void *p, uint32_t bytes);
+		inline const void *pointer_sub(const void *p, uint32_t bytes);
 	}
 
 	// ---------------------------------------------------------------
@@ -95,5 +99,23 @@ namespace foundation
 		if (mod)
 			pi += (align - mod);
 		return (void *)pi;
+	}
+
+	/// Returns the result of advancing p by the specified number of bytes
+	inline void *memory::pointer_add(void *p, uint32_t bytes)	{
+		return (void*)((char *)p + bytes);
+	}
+
+	inline const void *memory::pointer_add(const void *p, uint32_t bytes)	{
+		return (const void*)((const char *)p + bytes);
+	}
+
+	/// Returns the result of moving p back by the specified number of bytes
+	inline void *memory::pointer_sub(void *p, uint32_t bytes)	{
+		return (void*)((char *)p - bytes);
+	}
+
+	inline const void *memory::pointer_sub(const void *p, uint32_t bytes)	{
+		return (const void*)((const char *)p - bytes);
 	}
 }

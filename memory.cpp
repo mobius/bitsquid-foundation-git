@@ -1,5 +1,6 @@
 #include "memory.h"
 
+#include <stdlib.h>
 #include <assert.h>
 #include <new>
 

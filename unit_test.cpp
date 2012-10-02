@@ -5,6 +5,8 @@
 #include "memory.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #define ASSERT(x) assert(x)
@@ -128,6 +130,24 @@ namespace {
 		uint64_t h = murmur_hash_64(s, strlen(s), 0);
 		ASSERT(h == 0xe604acc23b568f83ull);
 	}
+
+	void test_pointer_arithmetic()
+	{
+		const char check = 0xfe;
+		const unsigned test_size = 128;
+
+		TempAllocator512 ta;
+		Array<char> buffer(ta);
+		array::set_capacity(buffer, test_size);
+		memset(array::begin(buffer), 0, array::size(buffer));
+
+		void* data = array::begin(buffer);
+		for (unsigned i = 0; i != test_size; ++i) {
+			buffer[i] = check;
+			char* value = (char*)memory::pointer_add(data, i);
+			ASSERT(*value == buffer[i]);
+		}
+	}
 }
 
 int main(int, char **)
@@ -138,5 +158,6 @@ int main(int, char **)
 	test_temp_allocator();
 	test_hash();
 	test_murmur_hash();
+	test_pointer_arithmetic();
 	return 0;
 }

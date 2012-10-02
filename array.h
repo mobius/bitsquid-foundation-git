@@ -79,7 +79,7 @@ namespace foundation {
 	}
 
 	template <typename T>
-	inline Array<T>::Array(Allocator &allocator) : _allocator(&allocator), _size(0), _capacity(0), _data(NULL) {}
+	inline Array<T>::Array(Allocator &allocator) : _allocator(&allocator), _size(0), _capacity(0), _data(0) {}
 
 	template <typename T>
 	inline Array<T>::~Array()
