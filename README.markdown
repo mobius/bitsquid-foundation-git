@@ -35,7 +35,7 @@ When you are writing a system using foundation, your header files typically only
 
 * **Closed structs.** A closed struct is indicated by the fact that its members start with an underscore. You should not manipulate the members of a closed struct directly. Instead, use the functions in the namespace with the same name as the struct. (In this case: object::). These functions are found in the .h file, unlike the struct definition, which is in the \_types.h file.
 
-Note that since namespaces are "open" you can extend the functionality for the object by adding your own functions to its namespace.
+    Note that since namespaces are "open" you can extend the functionality for the object by adding your own functions to its namespace.
 
 * **Abstract classes.** Used for high-level systems that are only accessed through pointers and/or references. These are predeclared in the \_types.h file. The virtual interface is found in the .h file.
 
@@ -59,7 +59,7 @@ Note that since namespaces are "open" you can extend the functionality for the o
 
 * **Array<T>** Implements an array of objects. A lightweight version of std::vector that assumes that *T* is a POD-object (i.e. constructors and destructors do not have to be called and the object can be moved with memmove).
 
-* **Hash<T>** Implements a lightweight hash that assumes that *T* is a POD-object. The hash keys are always uint64_t numbers. If you want to use some other type of key, just hash it to a uint64_t first. (The hash function should not have any collisions in your domain.)
+* **Hash<T>** Implements a lightweight hash that assumes that *T* is a POD-object. The hash keys are always uint64_t numbers. If you want to use some other type of key, just hash it to a uint64_t first. (The hash function should not have any collisions in your domain.) The hash can be used as a regular hash, or as a multi_hash, through the *multi_hash* interface.
 
 ### Math
 

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <algorithm>
 
 #define ASSERT(x) assert(x)
 
@@ -124,6 +125,32 @@ namespace {
 		memory_globals::shutdown();
 	}
 
+	void test_multi_hash() {
+		memory_globals::init();
+		{
+			TempAllocator128 ta;
+			Hash<int> h(ta);
+
+			ASSERT(multi_hash::count(h, 0) == 0);
+			multi_hash::insert(h, 0, 1);
+			multi_hash::insert(h, 0, 2);
+			multi_hash::insert(h, 0, 3);
+			ASSERT(multi_hash::count(h, 0) == 3);
+
+			Array<int> a(ta);
+			multi_hash::get(h, 0, a);
+			ASSERT(array::size(a) == 3);
+			std::sort(array::begin(a), array::end(a));
+			ASSERT(a[0] == 1 && a[1] == 2 && a[2] == 3);
+
+			multi_hash::remove(h, multi_hash::find_first(h, 0));
+			ASSERT(multi_hash::count(h,0) == 2);
+			multi_hash::remove_all(h, 0);
+			ASSERT(multi_hash::count(h, 0) == 0);
+		}
+		memory_globals::shutdown();
+	}
+
 	void test_murmur_hash()
 	{
 		const char *s = "test_string";
@@ -157,6 +184,7 @@ int main(int, char **)
 	test_scratch();
 	test_temp_allocator();
 	test_hash();
+	test_multi_hash();
 	test_murmur_hash();
 	test_pointer_arithmetic();
 	return 0;
