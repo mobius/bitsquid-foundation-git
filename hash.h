@@ -13,7 +13,27 @@ namespace foundation {
 
 	namespace hash
 	{
+		/// Returns true if the specified key exists in the hash.
+		template<typename T> bool has(const Hash<T> &h, uint64_t key);
+
+		/// Returns the value stored for the specified key, or deffault if the key
+		/// does not exist in the hash.
+		template<typename T> const T &get(const Hash<T> &h, uint64_t key, const T &deffault);
+
+		/// Sets the value for the key.
 		template<typename T> void set(Hash<T> &h, uint64_t key, const T &value);
+
+		/// Removes the key from the hash if it exists.
+		template<typename T> void remove(Hash<T> &h, uint64_t key);
+
+		/// Resizes the hash lookup table to the specified size.
+		/// (The table will grow automatically when 70 % full.)
+		template<typename T> void reserve(Hash<T> &h, uint32_t size);
+
+		/// Returns a pointer to the first entry in the hash table, can be used to
+		/// efficiently iterate over the elements (in random order).
+		template<typename T> const typename Hash<T>::Entry *begin(const Hash<T> &h);
+		template<typename T> const typename Hash<T>::Entry *end(const Hash<T> &h);
 	}
 
 	namespace hash_internal
@@ -138,17 +158,15 @@ namespace foundation {
 
 	namespace hash
 	{
-		const uint32_t END_OF_LIST = 0xffffffffu;
-
 		template<typename T> bool has(const Hash<T> &h, uint64_t key)
 		{
-			return hash_internal::find_or_fail(h, key) != END_OF_LIST;
+			return hash_internal::find_or_fail(h, key) != hash_internal::END_OF_LIST;
 		}
 
 		template<typename T> const T &get(const Hash<T> &h, uint64_t key, const T &deffault)
 		{
 			uint32_t i = hash_internal::find_or_fail(h, key);
-			return i == END_OF_LIST ? deffault : h._data[i].value;
+			return i == hash_internal::END_OF_LIST ? deffault : h._data[i].value;
 		}
 
 		template<typename T> void set(Hash<T> &h, uint64_t key, const T &value)
