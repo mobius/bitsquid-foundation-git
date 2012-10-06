@@ -8,11 +8,54 @@
 namespace foundation {
 	namespace array
 	{
+		/// The number of elements in the array.
+		template<typename T> uint32_t size(const Array<T> &a) ;
+		/// Returns true if there are any elements in the array.
+		template<typename T> bool any(const Array<T> &a);
+		/// Returns true if the array is empty.
+		template<typename T> bool empty(const Array<T> &a);
+		
+		/// Used to iterate over the array.
+		template<typename T> T* begin(Array<T> &a);
+		template<typename T> const T* begin(const Array<T> &a);
+		template<typename T> T* end(Array<T> &a);
+		template<typename T> const T* end(const Array<T> &a);
+		
+		/// Returns the first/last element of the array. Don't use these on an
+		/// empty array.
+		template<typename T> T& front(Array<T> &a);
+		template<typename T> const T& front(const Array<T> &a);
+		template<typename T> T& back(Array<T> &a);
+		template<typename T> const T& back(const Array<T> &a);
+
+		/// Changes the size of the array (does not reallocate memory unless necessary).
+		template <typename T> void resize(Array<T> &a, uint32_t new_size);
+		/// Removes all items in the array (does not free memory).
+		template <typename T> void clear(Array<T> &a);
+		/// Reallocates the array to the specified capacity.
+		template<typename T> void set_capacity(Array<T> &a, uint32_t new_capacity);
+		/// Makes sure that the array has at least the specified capacity.
+		/// (If not, the array is grown.)
+		template <typename T> void reserve(Array<T> &a, uint32_t new_capacity);
+		/// Grows the array using a geometric progression formula, so that the ammortized
+		/// cost of push_back() is O(1). If a min_capacity is specified, the array will
+		/// grow to at least that capacity.
+		template<typename T> void grow(Array<T> &a, uint32_t min_capacity = 0);
+		/// Trims the array so that its capacity matches its size.
+		template <typename T> void trim(Array<T> &a);
+
+		/// Pushes the item to the end of the array.
+		template<typename T> void push_back(Array<T> &a, const T &item);
+		/// Pops the last item from the array. The array cannot be empty.
+		template<typename T> void pop_back(Array<T> &a);
+	}
+
+	namespace array
+	{
 		template<typename T> inline uint32_t size(const Array<T> &a) 		{return a._size;}
 		template<typename T> inline bool any(const Array<T> &a) 			{return a._size != 0;}
 		template<typename T> inline bool empty(const Array<T> &a) 			{return a._size == 0;}
-		template<typename T> inline uint32_t capacity(const Array<T> &a)	{return a._capacity;}
-
+		
 		template<typename T> inline T* begin(Array<T> &a) 					{return a._data;}
 		template<typename T> inline const T* begin(const Array<T> &a) 		{return a._data;}
 		template<typename T> inline T* end(Array<T> &a) 					{return a._data + a._size;}
@@ -57,7 +100,7 @@ namespace foundation {
 			a._capacity = new_capacity;
 		}
 
-		template<typename T> void grow(Array<T> &a, uint32_t min_capacity = 0)
+		template<typename T> void grow(Array<T> &a, uint32_t min_capacity)
 		{
 			uint32_t new_capacity = a._capacity*2 + 10;
 			if (new_capacity < min_capacity)
