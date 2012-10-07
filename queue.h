@@ -1,8 +1,6 @@
 #include "collection_types.h"
 #include "array.h"
 
-#include <assert.h>
-
 namespace foundation
 {
 	namespace queue 
@@ -15,22 +13,39 @@ namespace foundation
 		/// Makes sure the queue has room for at least the specified number of items.
 		template<typename T> void reserve(Queue<T> &q, uint32_t size);
 
-		/// Pushes the item to the end of the array.
+		/// Pushes the item to the end of the queue.
 		template<typename T> void push_back(Queue<T> &q, const T &item);
-		/// Pops the last item from the array. The array cannot be empty.
+		/// Pops the last item from the queue. The queue cannot be empty.
 		template<typename T> void pop_back(Queue<T> &q);
-		/// Pushes the item to the front of the array.
+		/// Pushes the item to the front of the queue.
 		template<typename T> void push_front(Queue<T> &q, const T &item);
-		/// Pops the first item from the array. The array cannot be empty.
+		/// Pops the first item from the queue. The queue cannot be empty.
 		template<typename T> void pop_front(Queue<T> &q);
+
+		/// Consumes n items from the front of the queue.
+		template <typename T> void consume(Queue<T> &q, uint32_t n);
+		/// Pushes n items to the back of the queue.
+		template <typename T> void push(Queue<T> &q, const T *items, uint32_t n);
+
+		/// Returns the begin and end of the continuous chunk of elements at
+		/// the start of the queue. (Note that this chunk does not necessarily
+		/// contain all the elements in the queue (if the queue wraps around
+		/// the array).
+		///
+		/// This is useful for when you want to process many queue elements at
+		/// once.
+		template<typename T> T* begin_front(Queue<T> &q);
+		template<typename T> const T* begin_front(const Queue<T> &q);
+		template<typename T> T* end_front(Queue<T> &q);
+		template<typename T> const T* end_front(const Queue<T> &q);
 	}
 
 	namespace queue_internal
 	{
+		// Can only be used to increase the capacity.
 		template<typename T> void increase_capacity(Queue<T> &q, uint32_t new_capacity)
 		{
 			uint32_t end = array::size(q._data);
-			assert(new_capacity >= end);
 			array::resize(q._data, new_capacity);
 			if (q._offset + q._size > end) {
 				uint32_t end_items = end - q._offset;
@@ -91,6 +106,48 @@ namespace foundation
 		{
 			q._offset = (q._offset + 1) % array::size(q._data);
 			--q._size;
+		}
+
+		template <typename T> inline void consume(Queue<T> &q, uint32_t n)
+		{
+			q._offset = (q._offset + n) % array::size(q._data);
+			q._size -= n;
+		}
+
+		template <typename T> void push(Queue<T> &q, const T *items, uint32_t n)
+		{
+			if (space(q) < n)
+				queue_internal::grow(q, size(q) + n);
+			const uint32_t size = array::size(q._data);
+			const uint32_t insert = (q._offset + q._size) % size;
+			uint32_t to_insert = n;
+			if (insert + to_insert > size)
+				to_insert = size - insert;
+			memcpy(array::begin(q._data) + insert, items, to_insert);
+			q._size += to_insert;
+			items += to_insert;
+			n -= to_insert;
+			memcpy(array::begin(q._data), items, n);
+			q._size += n;
+		}
+
+		template<typename T> inline T* begin_front(Queue<T> &q)
+		{
+			return array::begin(q._data) + q._offset;
+		}
+		template<typename T> inline const T* begin_front(const Queue<T> &q)
+		{
+			return array::begin(q._data) + q._offset;
+		}
+		template<typename T> T* end_front(Queue<T> &q)
+		{
+			uint32_t end = q._offset + q._size;
+			return end > array::size(q._data) ? array::end(q._data) : array::begin(q._data) + end;
+		}
+		template<typename T> const T* end_front(const Queue<T> &q)
+		{
+			uint32_t end = q._offset + q._size;
+			return end > array::size(q._data) ? array::end(q._data) : array::begin(q._data) + end;
 		}
 	}
 
