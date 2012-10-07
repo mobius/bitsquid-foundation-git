@@ -61,6 +61,8 @@ When you are writing a system using foundation, your header files typically only
 
 * **Hash<T>** Implements a lightweight hash that assumes that *T* is a POD-object. The hash keys are always uint64_t numbers. If you want to use some other type of key, just hash it to a uint64_t first. (The hash function should not have any collisions in your domain.) The hash can be used as a regular hash, or as a multi_hash, through the *multi_hash* interface.
 
+* **string_stream** Functions for using an Array<char> as a stream of characters that you can print formatted messages to.
+
 ### Math
 
 * Basic data definitions for vectors, quaternions and matrices.

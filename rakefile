@@ -5,8 +5,9 @@ EXEC = "unit_test"
 # Use -DPLATFORM_BIG_ENDIAN for big endian platforms
 FLAGS = "-Wall -Wextra -g"
 
-OBJECTS = %w(unit_test.o memory.o murmur_hash.o)
-HEADERS = %w(array.h collection_types.h memory.h memory_types.h types.h temp_allocator.h hash.h)
+OBJECTS = %w(unit_test.o memory.o murmur_hash.o string_stream.o)
+HEADERS = %w(array.h collection_types.h memory.h memory_types.h types.h 
+	temp_allocator.h hash.h string_stream.h)
 
 # tasks
 
@@ -39,3 +40,4 @@ end
 file 'unit_test.o' => %w(unit_test.cpp) + HEADERS
 file 'memory.o' => %w(memory.cpp) + %w(types.h memory_types.h memory.h)
 file 'murmur_hash.o' => %w(murmur_hash.cpp) + %w(murmur_hash.h)
+file 'string_stream.o' => %w(string_stream.cpp) + %w(string_stream.h collection_types.h array.h types.h memory_types.h  )

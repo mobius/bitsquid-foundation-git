@@ -1,3 +1,4 @@
+#include "string_stream.h"
 #include "murmur_hash.h"
 #include "hash.h"
 #include "temp_allocator.h"
@@ -125,7 +126,8 @@ namespace {
 		memory_globals::shutdown();
 	}
 
-	void test_multi_hash() {
+	void test_multi_hash()
+	{
 		memory_globals::init();
 		{
 			TempAllocator128 ta;
@@ -175,6 +177,32 @@ namespace {
 			ASSERT(*value == buffer[i]);
 		}
 	}
+
+	void test_string_stream()
+	{
+		memory_globals::init();
+		{
+			using namespace string_stream;
+
+			TempAllocator1024 ta;
+			Buffer ss(ta);
+
+			ss << "Name"; 			tab(ss, 20);	ss << "Score\n";
+			repeat(ss, 10, '-');	tab(ss, 20);	repeat(ss, 10, '-'); ss << "\n";
+			ss << "Niklas"; 		tab(ss, 20);	printf(ss, "%.2f", 2.7182818284f); ss << "\n";
+			ss << "Jim"; 			tab(ss, 20);	printf(ss, "%.2f", 3.14159265f); ss << "\n";
+
+			ASSERT(
+				0 == strcmp(c_str(ss),
+					"Name                Score\n"
+					"----------          ----------\n"
+					"Niklas              2.72\n"
+					"Jim                 3.14\n"
+				)
+			);
+		}
+		memory_globals::shutdown();
+	}
 }
 
 int main(int, char **)
@@ -187,5 +215,6 @@ int main(int, char **)
 	test_multi_hash();
 	test_murmur_hash();
 	test_pointer_arithmetic();
+	test_string_stream();
 	return 0;
 }
