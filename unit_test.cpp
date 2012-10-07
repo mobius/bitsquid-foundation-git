@@ -1,3 +1,4 @@
+#include "queue.h"
 #include "string_stream.h"
 #include "murmur_hash.h"
 #include "hash.h"
@@ -203,6 +204,23 @@ namespace {
 		}
 		memory_globals::shutdown();
 	}
+
+	void test_queue()
+	{
+		memory_globals::init();
+		{
+			TempAllocator1024 ta;
+			Queue<int> q(ta);
+
+			queue::reserve(q, 10);
+			ASSERT(queue::space(q) == 10);
+			queue::push_back(q, 11);
+			queue::push_front(q, 22);
+			ASSERT(queue::size(q) == 2);
+			ASSERT(q[0] == 22);
+			ASSERT(q[1] == 11);
+		}
+	}
 }
 
 int main(int, char **)
@@ -216,5 +234,6 @@ int main(int, char **)
 	test_murmur_hash();
 	test_pointer_arithmetic();
 	test_string_stream();
+	test_queue();
 	return 0;
 }

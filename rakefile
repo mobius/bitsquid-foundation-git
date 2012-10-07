@@ -7,7 +7,7 @@ FLAGS = "-Wall -Wextra -g"
 
 OBJECTS = %w(unit_test.o memory.o murmur_hash.o string_stream.o)
 HEADERS = %w(array.h collection_types.h memory.h memory_types.h types.h 
-	temp_allocator.h hash.h string_stream.h)
+	temp_allocator.h hash.h string_stream.h queue.h)
 
 # tasks
 
