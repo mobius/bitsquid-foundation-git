@@ -224,8 +224,8 @@ namespace {
 			int items[] = {1,2,3,4,5,6,7,8,9,10};
 			queue::push(q,items,10);
 			ASSERT(queue::size(q) == 10);
-			ASSERT(q[0] == 1);
-			ASSERT(q[9] == 10);
+			for (int i=0; i<10; ++i)
+				ASSERT(q[i] == i+1);
 			queue::consume(q, queue::end_front(q) - queue::begin_front(q));
 			queue::consume(q, queue::end_front(q) - queue::begin_front(q));
 			ASSERT(queue::size(q) == 0);

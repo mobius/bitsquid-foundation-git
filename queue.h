@@ -123,11 +123,11 @@ namespace foundation
 			uint32_t to_insert = n;
 			if (insert + to_insert > size)
 				to_insert = size - insert;
-			memcpy(array::begin(q._data) + insert, items, to_insert);
+			memcpy(array::begin(q._data) + insert, items, to_insert * sizeof(T));
 			q._size += to_insert;
 			items += to_insert;
 			n -= to_insert;
-			memcpy(array::begin(q._data), items, n);
+			memcpy(array::begin(q._data), items, n * sizeof(T));
 			q._size += n;
 		}
 
