@@ -123,6 +123,9 @@ namespace {
 			ASSERT(hash::get(h,1000,0) == 0);
 			for (int i=0; i<100; ++i)
 				ASSERT(hash::get(h,i,0) == i*i);
+			hash::clear(h);
+			for (int i=0; i<100; ++i)
+				ASSERT(!hash::has(h,i));
 		}
 		memory_globals::shutdown();
 	}
