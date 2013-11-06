@@ -30,6 +30,9 @@ namespace foundation {
 		/// (The table will grow automatically when 70 % full.)
 		template<typename T> void reserve(Hash<T> &h, uint32_t size);
 
+		/// Remove all elements from the hash.
+		template<typename T> void clear(Hash<T> &h);
+
 		/// Returns a pointer to the first entry in the hash table, can be used to
 		/// efficiently iterate over the elements (in random order).
 		template<typename T> const typename Hash<T>::Entry *begin(const Hash<T> &h);
@@ -248,6 +251,12 @@ namespace foundation {
 		template<typename T> void reserve(Hash<T> &h, uint32_t size)
 		{
 			hash_internal::rehash(h, size);
+		}
+
+		template<typename T> void clear(Hash<T> &h)
+		{
+			array::clear( h._data );
+			array::clear( h._hash );
 		}
 
 		template<typename T> const typename Hash<T>::Entry *begin(const Hash<T> &h)
