@@ -255,8 +255,8 @@ namespace foundation {
 
 		template<typename T> void clear(Hash<T> &h)
 		{
-			array::clear( h._data );
-			array::clear( h._hash );
+			array::clear(h._data);
+			array::clear(h._hash);
 		}
 
 		template<typename T> const typename Hash<T>::Entry *begin(const Hash<T> &h)
