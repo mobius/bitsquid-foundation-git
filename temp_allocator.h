@@ -88,7 +88,7 @@ namespace foundation
 			_end = _start + to_allocate;
 			*(void **)_start = 0;
 			_p += sizeof(void *);
-			memory::align_forward(p, align);
+			_p = (char *)memory::align_forward(_p, align);
 		}
 		void *result = _p;
 		_p += size;

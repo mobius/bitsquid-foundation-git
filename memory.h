@@ -72,7 +72,7 @@ namespace foundation
 		/// to service the allocations.
 		///
 		/// If there is not enough memory in the buffer to match requests for scratch
-		/// memory, memory from the default_allocator will be returned instaed.
+		/// memory, memory from the default_allocator will be returned instead.
 		Allocator &default_scratch_allocator();
 
 		/// Shuts down the global memory allocators created by init().
@@ -93,7 +93,8 @@ namespace foundation
 
 	// Aligns p to the specified alignment by moving it forward if necessary
 	// and returns the result.
-	inline void *memory::align_forward(void *p, uint32_t align) {
+	inline void *memory::align_forward(void *p, uint32_t align)
+	{
 		uintptr_t pi = uintptr_t(p);
 		const uint32_t mod = pi % align;
 		if (mod)
@@ -102,20 +103,34 @@ namespace foundation
 	}
 
 	/// Returns the result of advancing p by the specified number of bytes
-	inline void *memory::pointer_add(void *p, uint32_t bytes)	{
+	inline void *memory::pointer_add(void *p, uint32_t bytes)
+	{
 		return (void*)((char *)p + bytes);
 	}
 
-	inline const void *memory::pointer_add(const void *p, uint32_t bytes)	{
+	inline const void *memory::pointer_add(const void *p, uint32_t bytes)
+	{
 		return (const void*)((const char *)p + bytes);
 	}
 
+	inline template<class T> T *memory::pointer_add(T *p, uint32_t bytes)
+	{
+		return (T*)((char *)p + bytes);
+	}
+
+	inline template<class T> const T *memory::pointer_add(const T *p, uint32_t bytes)
+	{
+		return (const T*)((char *)p + bytes);
+	}
+
 	/// Returns the result of moving p back by the specified number of bytes
-	inline void *memory::pointer_sub(void *p, uint32_t bytes)	{
+	inline void *memory::pointer_sub(void *p, uint32_t bytes)
+	{
 		return (void*)((char *)p - bytes);
 	}
 
-	inline const void *memory::pointer_sub(const void *p, uint32_t bytes)	{
+	inline const void *memory::pointer_sub(const void *p, uint32_t bytes)
+	{
 		return (const void*)((const char *)p - bytes);
 	}
 }
