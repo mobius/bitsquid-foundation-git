@@ -113,16 +113,6 @@ namespace foundation
 		return (const void*)((const char *)p + bytes);
 	}
 
-	inline template<class T> T *memory::pointer_add(T *p, uint32_t bytes)
-	{
-		return (T*)((char *)p + bytes);
-	}
-
-	inline template<class T> const T *memory::pointer_add(const T *p, uint32_t bytes)
-	{
-		return (const T*)((char *)p + bytes);
-	}
-
 	/// Returns the result of moving p back by the specified number of bytes
 	inline void *memory::pointer_sub(void *p, uint32_t bytes)
 	{

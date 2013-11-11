@@ -166,7 +166,7 @@ namespace {
 
 	void test_pointer_arithmetic()
 	{
-		const char check = 0xfe;
+		const char check = (char)0xfe;
 		const unsigned test_size = 128;
 
 		TempAllocator512 ta;

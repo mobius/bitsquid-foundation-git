@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "snprintf_msvc.h"
+
 namespace foundation
 {
 	/// Functions for operating on an Array<char> as a stream of characters,
